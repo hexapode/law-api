@@ -1,0 +1,31 @@
+<html>
+
+  <body>
+
+
+    <h1>An API to the law</h1>
+
+    <h2> Usage </h2>
+
+    <h3> GET /ask/:n/:query</h3>
+
+    <p>
+      <b> :n </b> is the number of results you want to get back. <br>
+      <b> :query </b> is the query you want to ask the API. <br>
+    </p>
+
+    <h3>POST /query</h3>
+
+    <p>
+      <b> body </b> is a JSON object with the following structure: <br>
+      <code>
+        {
+          "query": "your query",
+          "n": "number of results you want to get back"
+        }
+      </code>
+    </p>
+  </body>
+
+
+</html>

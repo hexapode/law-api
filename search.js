@@ -1,65 +1,12 @@
-// load index
 const fs = require('fs');
-const https = require('https');
-const http = require('http');
+
 
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
   apiKey: process.env.OPEN_AI_KEY,
 });
-
-const bodyParser = require('body-parser');
-
-
 const openai = new OpenAIApi(configuration);
-
-const express = require('express');
-const app = express();
-app.use(bodyParser.json());
-
-
-app.use(express.static('public'));
-app.get('/ask/:n/:query', async (req, res) => {
- 
-  let result = await search( req.params.n, req.params.query);
-  res.send(result);
-});
-
-
-app.post('/query', async (req, res) => {
-  let n = req.body.n;
-  let query = req.body.query;
-
-  if (!query || !n) { 
-    res.json({
-      "error" : "Invalid parameter, expecting n and query",
-      "received" : req.body
-    });
-    return;
-  }
-  let result = await search(n, query);
-  res.send(result);
-});
-
-
-
-const httpsServer = https.createServer({
-  key: fs.readFileSync("../key.pem"),
-  cert: fs.readFileSync("../cert.pem"),
-},
-app);
-
-httpsServer.listen(3001, () => {
-  console.log('https server listening on port 3001');
-});
-
-const httpServer = http.createServer(app);
-
-httpServer.listen(3000, () => {
-  console.log('http server listening on port 3000');
-});
-
 
 
 let index = [];
@@ -69,7 +16,7 @@ const indexDir = '../usa-code';
 const indexFiles = fs.readdirSync(indexDir);
 
 
-
+let start = new Date().getTime();
 for (let file of indexFiles) {
   if (file[0] === '.') {
     continue;
@@ -87,7 +34,11 @@ for (let file of indexFiles) {
 
 }
 
+let end = new Date().getTime();
+
+
 console.log(`loaded ${index.length} vectors loaded`);
+console.log(`in ${end - start} ms`);
 
 
 async function search(n, query) {
@@ -149,3 +100,4 @@ async function getVector(str) {
   return response.data.data[0].embedding;
 }
 
+module.exports = search;
