@@ -24,7 +24,7 @@ app.listen(3000, () => {
 
 let index = [];
 
-const indexDir = 'usa-code';
+const indexDir = '../usa-code';
 
 const indexFiles = fs.readdirSync(indexDir);
 
