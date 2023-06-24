@@ -1,0 +1,18 @@
+{
+  "name": "law-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "openai": "^3.3.0",
+    "openai-gpt-token-counter": "^1.0.3",
+    "save": "^2.9.0",
+    "vectra": "^0.1.2"
+  }
+}
