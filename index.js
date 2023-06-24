@@ -37,7 +37,7 @@ app.post('/query', async (req, res) => {
 });
 
 
-/*
+
 const httpsServer = https.createServer({
   key: fs.readFileSync("../key.pem"),
   cert: fs.readFileSync("../cert.pem"),
@@ -48,7 +48,7 @@ app);
 httpsServer.listen(3001, () => {
   console.log('https server listening on port 3001');
 });
-*/
+
 const httpServer = http.createServer(app);
 
 httpServer.listen(3000, () => {
