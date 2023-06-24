@@ -1,5 +1,6 @@
 // load index
 const fs = require('fs');
+const https = require('https');
 
 const { Configuration, OpenAIApi } = require("openai");
 
