@@ -38,8 +38,10 @@ for (let file of indexFiles) {
   let data = fs.readFileSync(`${indexDir}/${file}`, 'utf8');
 
   data = JSON.parse(data);
+  if (data.text.trim().length) {
+    index.push(...data);
+  }
 
-  index.push(...data);
 }
 
 console.log(`loaded ${index.length} vectors loaded`);
