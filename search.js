@@ -38,9 +38,12 @@ for (let file of indexFiles) {
   let data = fs.readFileSync(`${indexDir}/${file}`, 'utf8');
 
   data = JSON.parse(data);
-  if (data.text.trim().length) {
-    index.push(...data);
+  for (let d of data) { 
+    if (d.text.trim().length) {
+      index.push(d);
+    }
   }
+ 
 
 }
 
