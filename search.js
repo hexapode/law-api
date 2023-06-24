@@ -1,6 +1,7 @@
 // load index
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
 
 const { Configuration, OpenAIApi } = require("openai");
 
@@ -42,20 +43,23 @@ app.post('/query', async (req, res) => {
 });
 
 
-app.listen(3000, () => {
-  console.log('App listening on port 3000');
-});
 
-
-const server = https.createServer({
+const httpsServer = https.createServer({
   key: fs.readFileSync("../key.pem"),
   cert: fs.readFileSync("../cert.pem"),
 },
 app);
 
-server.listen(3001, () => {
-  console.log('https server listening on port 443');
+httpsServer.listen(3001, () => {
+  console.log('https server listening on port 3001');
 });
+
+const httpServer = http.createServer(app);
+
+httpServer.listen(3000, () => {
+  console.log('http server listening on port 3000');
+});
+
 
 
 let index = [];
