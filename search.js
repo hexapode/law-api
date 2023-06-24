@@ -16,6 +16,8 @@ const express = require('express');
 const app = express();
 app.use(bodyParser.json());
 
+
+app.use(express.static('public'));
 app.get('/ask/:n/:query', async (req, res) => {
  
   let result = await search( req.params.n, req.params.query);
@@ -38,10 +40,20 @@ app.post('/query', async (req, res) => {
   res.send(result);
 });
 
+
 app.listen(3000, () => {
   console.log('App listening on port 3000');
 });
 
+const server = https.createServer({
+  key: fs.readFileSync("../key.pem"),
+  cert: fs.readFileSync("../cert.pem"),
+},
+app);
+
+server.listen(3001, () => {
+  console.log('https server listening on port 443');
+});
 
 
 let index = [];
