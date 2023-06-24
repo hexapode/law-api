@@ -7,10 +7,14 @@ const configuration = new Configuration({
   apiKey: process.env.OPEN_AI_KEY,
 });
 
+const bodyParser = require('body-parser');
+
+
 const openai = new OpenAIApi(configuration);
 
 const express = require('express');
 const app = express();
+app.use(bodyParser.json());
 
 app.get('/ask/:n/:query', async (req, res) => {
  
@@ -18,9 +22,27 @@ app.get('/ask/:n/:query', async (req, res) => {
   res.send(result);
 });
 
+
+app.post('/query', async (req, res) => {
+  let n = req.body.n;
+  let query = req.body.query;
+
+  if (!query || !n) { 
+    res.json({
+      "error" : "Invalid parameter, expecting n and query",
+      "received" : req.body
+    });
+    return;
+  }
+  let result = await search(n, query);
+  res.send(result);
+});
+
 app.listen(3000, () => {
   console.log('App listening on port 3000');
 });
+
+
 
 let index = [];
 
