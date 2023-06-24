@@ -46,7 +46,7 @@ app.listen(3000, () => {
   console.log('App listening on port 3000');
 });
 
-/*
+
 const server = https.createServer({
   key: fs.readFileSync("../key.pem"),
   cert: fs.readFileSync("../cert.pem"),
@@ -56,7 +56,7 @@ app);
 server.listen(3001, () => {
   console.log('https server listening on port 443');
 });
-*/
+
 
 let index = [];
 
