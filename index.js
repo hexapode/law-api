@@ -16,14 +16,20 @@ app.use(express.static('public'));
 
 app.get('/ask/:n/:query', async (req, res) => {
  
-  let result = await search( req.params.n, req.params.query);
+  let result = await search( req.params.n, "USA Code", req.params.query);
   res.send(result);
 });
 
+app.get('/ask/:n/:name/:query', async (req, res) => {
+ 
+  let result = await search( req.params.n, req.params.name, req.params.query);
+  res.send(result);
+});
 
 app.post('/query', async (req, res) => {
   let n = req.body.n;
   let query = req.body.query;
+  let name = req.params.legislation || "USA Code";
 
   if (!query || !n) { 
     res.json({
@@ -32,22 +38,25 @@ app.post('/query', async (req, res) => {
     });
     return;
   }
-  let result = await search(n, query);
+  let result = await search(n, name,query);
   res.send(result);
 });
 
 
+if (fs.existsSync('../key.pem')) { 
+  const httpsServer = https.createServer({
+    key: fs.readFileSync("../key.pem"),
+    cert: fs.readFileSync("../cert.pem"),
+  },
+  app);
+  
+  
+  httpsServer.listen(3001, () => {
+    console.log('https server listening on port 3001');
+  });
 
-const httpsServer = https.createServer({
-  key: fs.readFileSync("../key.pem"),
-  cert: fs.readFileSync("../cert.pem"),
-},
-app);
+}
 
-
-httpsServer.listen(3001, () => {
-  console.log('https server listening on port 3001');
-});
 
 const httpServer = http.createServer(app);
 

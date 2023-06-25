@@ -11,9 +11,9 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 // us code
-const dir = `../markdown-chunck-of-the-usa-code-of-federal-regulation/chuncks`;
+const dir = `../markdown-chunks-of-the-usa-ca-code/chunks`;
 
-const index = 'usa-code-regulation'
+const index = '../LawEmbedings/usa-ca-code.index'
 
 let OUT_COUNT = 0;
 if (!fs.existsSync(index)) {
@@ -74,13 +74,13 @@ async function createIndex(tasks) {
   let texts = [];
   for (let task of tasks) {
     let text = fs.readFileSync(task, 'utf8');
-    if (text.length > 15000) {
-      if (text.lenght > 50000) {
-        text = text.substring(0, 50000);
+    if (text.length > 8000) {
+      if (text.lenght > 20000) {
+        text = text.substring(0, 20000);
       }
-      while (count(text) > 8000) { 
+      while (count(text) > 6000) { 
         console.log(count(text));
-        text = text.substring(0, text.length - ((count(text) - 8000) + 10));
+        text = text.substring(0, text.length - ((count(text) - 6000) * 1.5 + 10));
       }
       console.log("0>", count(text));
     }

@@ -14,6 +14,14 @@
       <b> :query </b> is the query you want to ask the API. <br>
     </p>
 
+    <h3> GET /ask/:n/:legislation/:query</h3>
+
+    <p>
+      <b> :n </b> is the number of results you want to get back. <br>
+      <b> :query </b> is the query you want to ask the API. <br>
+      <b> :legislation </b> The target legislation. <br>
+    </p>
+
     <h3>POST /query</h3>
 
     <p>
@@ -21,10 +29,20 @@
       <code>
         {
           "query": "your query",
-          "n": "number of results you want to get back"
+          "n": "number of results you want to get back",
+          "legislation" : "the target legislation (default: US Code)"
         }
       </code>
     </p>
+
+    <h3>Available Legislations</h3>
+
+    <ul>
+      <li><b>US Code</b>: use "USA Code"</li>
+      <li><b>US Code of Federal Regulation</b>: use "USA Code of regulation"</li>
+      <li><b>USA California</b>: use "California Legislation""</li>
+    </ul>
+
   </body>
 
 

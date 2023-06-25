@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+const logFile = '../log.txt'
 
 const { Configuration, OpenAIApi } = require("openai");
 
@@ -9,47 +10,87 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
-let index = [];
+let index = {
 
-const indexDir = '../usa-code';
+};
 
-const indexFiles = fs.readdirSync(indexDir);
+const indexDir = '../LawEmbedings';
 
+// read all indexes
 
-let start = new Date().getTime();
-for (let file of indexFiles) {
-  if (file[0] === '.') {
-    continue;
-  }
-  console.log(`loading ${file}`);
-  let data = fs.readFileSync(`${indexDir}/${file}`, 'utf8');
+async function init() {
+  let indexesDir = fs.readdirSync(indexDir);
 
-  data = JSON.parse(data);
-  for (let d of data) { 
-    if (d.text.trim().length) {
-      index.push(d);
+  for (let indexDir of indexesDir) {
+    if (indexDir[0] === '.') { 
+      continue;
     }
-  }
- 
 
+      await buildIndex(indexDir);
+  }
+}
+init();
+
+function buildIndex(indexName) {
+  let info = JSON.parse(fs.readFileSync(`${indexDir}/${indexName}/package.json`, 'utf8'));
+
+  const indexFiles = fs.readdirSync(`${indexDir}/${indexName}`);
+  let name  = info.name;
+
+  index[name] = [];
+  let start = new Date().getTime();
+  for (let file of indexFiles) {
+    if (file.indexOf('package') != -1) {
+      continue;
+    }
+    if (file[0] === '.') {
+      continue;
+    }
+    console.log(`loading ${file}`);
+    let data = fs.readFileSync(`${indexDir}/${indexName}/${file}`, 'utf8');
+
+    data = JSON.parse(data);
+
+
+
+    for (let d of data) { 
+      if (d.text.trim().length) {
+        index[name].push(d);
+      }
+    }
+
+  }
+
+  let end = new Date().getTime();
+
+
+  console.log(`loaded ${index.length} vectors loaded`);
+  console.log(`in ${end - start} ms`);
 }
 
-let end = new Date().getTime();
 
 
-console.log(`loaded ${index.length} vectors loaded`);
-console.log(`in ${end - start} ms`);
 
 
-async function search(n, query) {
-  let start = new Date();
+
+async function search(n, name, query) {
+  if (!index[name]) {
+    console.log(index);
+    name = "USA Code"
+  }
+
   let vector = await getVector(query);
-
   let best = [];
+  let start = new Date().getTime();
 
-  for (let v of index) {
+  console.log(vector, index[name][0])
+  for (let v of index[name]) {
+    if (!v.vector) {
+      console.log(v);
+      continue;
+    }
     let s = cosineSimilarity(vector, v.vector);
-
+    
     if (best.length < n) {
       best.push({
         s: s,
@@ -68,9 +109,17 @@ async function search(n, query) {
       }
     }
   }
-  let end = new Date();
-  console.log("Time:", end.getTime() - start.getTime());
+  let end = new Date().getTime();
   console.log(best);
+  console.log("Time:", end - start);
+  
+  fs.appendFile(logFile, `---
+date: ${new Date().getTime}
+compute: ${ end - start}
+n: ${n}
+index: ${name}
+query: ${query}`, function (err) { }
+);
   return best;
 }
 
@@ -79,12 +128,13 @@ function cosineSimilarity(v1, v2) {
   let v1Magnitude = 0;
   let v2Magnitude = 0;
 
-  for (let i = 0; i < v1.length; i++) {
+  for (let i = 0; i < v1.length && i <v2.length; i++) {
     dotProduct += v1[i] * v2[i];
     v1Magnitude += v1[i] * v1[i];
     v2Magnitude += v2[i] * v2[i];
   }
 
+  // skip sqrt
   v1Magnitude = Math.sqrt(v1Magnitude);
   v2Magnitude = Math.sqrt(v2Magnitude);
 
@@ -92,12 +142,20 @@ function cosineSimilarity(v1, v2) {
 }
 
 async function getVector(str) {
+  try {
+    const response = await openai.createEmbedding({
+      "input": str,
+      "model": 'text-embedding-ada-002'
+    });
 
-  const response = await openai.createEmbedding({
-    "input": str,
-    "model": 'text-embedding-ada-002'
-  });
-  return response.data.data[0].embedding;
+    return response.data.data[0].embedding;
+  } catch (e) {
+    return [];
+  }
+
+
+
+
 }
 
 module.exports = search;
