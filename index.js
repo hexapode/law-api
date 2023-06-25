@@ -16,7 +16,7 @@ app.use(express.static('public'));
 
 app.get('/ask/:n/:query', async (req, res) => {
  
-  let result = await search( req.params.n, "USA Code", req.params.query);
+  let result = await search( req.params.n, "usa_code", req.params.query);
   res.send(result);
 });
 
@@ -29,7 +29,7 @@ app.get('/ask/:n/:name/:query', async (req, res) => {
 app.post('/query', async (req, res) => {
   let n = req.body.n;
   let query = req.body.query;
-  let name = req.params.legislation || "USA Code";
+  let name = req.params.legislation || "usa_code";
 
   if (!query || !n) { 
     res.json({

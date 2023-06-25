@@ -76,14 +76,13 @@ function buildIndex(indexName) {
 async function search(n, name, query) {
   if (!index[name]) {
     console.log(index);
-    name = "USA Code"
+    name = "usa_code"
   }
 
   let vector = await getVector(query);
   let best = [];
   let start = new Date().getTime();
 
-  console.log(vector, index[name][0])
   for (let v of index[name]) {
     if (!v.vector) {
       console.log(v);
